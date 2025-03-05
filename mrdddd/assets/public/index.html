@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Chat</title>
+  <title>Classroom</title>
   <style>
     :root {
       --background: #181926; 
@@ -404,6 +404,9 @@
 
       // API token - in a real app, this should be stored securely on the server
       const token = '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';
+      
+      // Use a variable instead of localStorage for the current model
+      let currentModel = 'mixtral-8x7b-32768';
 
       // Focus/blur effects for input
       textInput.addEventListener('focus', () => {
@@ -430,19 +433,10 @@
           const selectedValue = event.target.closest('li').getAttribute('value');
           const selectedName = event.target.closest('li').querySelector('p').textContent;
           modelDropdown.querySelector('.dropdown-selected').textContent = selectedName;
-          setModel(selectedValue);
+          currentModel = selectedValue; // Update the variable instead of localStorage
           modelDropdown.classList.remove('open');
         }
       });
-
-      function getModel() {
-        return localStorage.getItem('ai-model') || 'mixtral-8x7b-32768';
-      }
-
-      function setModel(model) {
-        localStorage.setItem('ai-model', model);
-        console.log(`AI model set to: ${model}`);
-      }
 
       function sendTextMessage() {
         const message = textInput.value.trim();
@@ -523,12 +517,11 @@
       }
 
       async function fetchResponse(userMessage) {
-        const model = getModel();
         const apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
         const systemPrompt = "You are a helpful AI assistant.";
 
         const requestData = {
-          model: model,
+          model: currentModel, // Use the variable instead of localStorage
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userMessage }
@@ -583,4 +576,3 @@
   </script>
 </body>
 </html>
-
